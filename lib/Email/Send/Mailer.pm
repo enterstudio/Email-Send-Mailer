@@ -99,6 +99,11 @@ sub exception {
 
   # the exception method should be a transparent abstraction
   my $exception = Sub::Uplevel::uplevel(2, sub { $class->new(@arg) });
+  $self->handle_exception($exception);
+}
+
+sub handle_exception {
+  my ($self, $exception) = @_;
   my $handle = 'throw';
 
   if ($exception->isa('Email::SendX::Exception::Success')) {
