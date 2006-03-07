@@ -103,7 +103,7 @@ sub exception {
 
   if ($exception->isa('Email::SendX::Exception::Success')) {
     $handle = $self->on_success; 
-  } elsif ($exception->isa('Email::SendX::Exception::Success')) {
+  } elsif ($exception->isa('Email::SendX::Exception::Failure')) {
     $handle = $self->on_failure; 
   }
 

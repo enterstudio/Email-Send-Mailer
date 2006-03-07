@@ -1,4 +1,4 @@
-package Email::Send::Mailer::Test;
+package Email::Send::Mailer::SMTP;
 use base qw(Email::Send::Mailer);
 use base qw(Class::Accessor);
 
@@ -30,16 +30,16 @@ sub send {
     );
 
     @ok = () unless $ok[0]; # stupid api bubbling up from Net::SMTP
-    return $self->exception('Email::SendX::Exception::Failure') unless @ok;
+    return $self->exception('Email::SendX::Exception::Failure') unless (@ok);
 
     %ok = map { $_ => 1 } @ok;
   }
 
-  my %undeliverable = grep { not $ok{$_} } @to;
+  my @undeliverable = grep { not $ok{$_} } @to;
 
   return $self->exception(
     'Email::SendX::Exception::Success',
-    failures => { map { $_ => 'rejected by smtp server' } keys %undeliverable },
+    failures => { map { $_ => 'rejected by smtp server' } @undeliverable },
   );
 }
 
