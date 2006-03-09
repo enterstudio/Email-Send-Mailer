@@ -27,13 +27,16 @@ our $VERSION = '0.01';
   use base qw(Email::Send::Mailer);
 
   sub is_available { 1; }
-  sub send { return Email::SendX::Exception::Success->new; }
+  sub send {
+    my ($self, $message, $arg) = @_;
+    return $self->exception('Email::SendX::Exception::Success');
+  }
 
   ...
 
   my $mailer = Email::Send::Mailer::DevNull->new;
   my $sender = Email::Send->new({ mailer => $mailer });
-  $sender->send($message);
+  $sender->send($message, { to => [ $recipient, ... ], from => $from });
 
 =head1 DESCRIPTION
 
