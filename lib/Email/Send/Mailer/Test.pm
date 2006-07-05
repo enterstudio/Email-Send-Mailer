@@ -42,7 +42,7 @@ sub delivered_messages {
 sub send {
   my ($self, $message, $arg) = @_;
   
-  my @to = ref $to ? @{ $arg->{to} } : ($to);
+  my @to = ref $arg->{to} ? @{ $arg->{to} } : ($arg->{to});
 
   # should use List::MoreUtils::part -- when released
   my @undeliverables = grep { not $self->recipient_ok($_) } @to;
