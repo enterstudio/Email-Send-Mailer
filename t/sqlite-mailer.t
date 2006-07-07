@@ -7,11 +7,9 @@ use Test::More 'no_plan';
 use Email::Send;
 BEGIN { use_ok('Email::Send::Mailer::SQLite'); }
 
-my $mailer = Email::Send::Mailer::Test->new({ db_file => 'foo.db' });
+my $mailer = Email::Send::Mailer::SQLite->new({ db_file => 'foo.db' });
 isa_ok($mailer, 'Email::Send::Mailer');
 isa_ok($mailer, 'Email::Send::Mailer::SQLite');
-
-is($mailer->deliveries, 0, "no deliveries so far");
 
 my $message = <<'END_MESSAGE';
 From: sender@test.example.com
@@ -34,7 +32,10 @@ cmp_ok($sender->mailer, '==', $mailer, "sender's mailer is what we asked for");
 {
   my $result = $sender->send(
     $message,
-    { to => [ qw(recipient@nowhere.example.net)] }
+    {
+      to   => [ qw(recipient@nowhere.example.net)],
+      from => 'nobody@nowhere.example.mil',
+    }
   );
 
   isa_ok($result, 'Email::SendX::Exception');
@@ -44,7 +45,10 @@ cmp_ok($sender->mailer, '==', $mailer, "sender's mailer is what we asked for");
 {
   my $result = $sender->send(
     $message,
-    { to => [ qw(secret-bcc@nowhere.example.net)] }
+    {
+      to   => [ qw(recipient@nowhere.example.net)],
+      from => 'nobody@nowhere.example.mil',
+    }
   );
 
   isa_ok($result, 'Email::SendX::Exception');
