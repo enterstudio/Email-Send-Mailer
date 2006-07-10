@@ -3,7 +3,15 @@ MANIFEST
 META.yml # Will be created by "make dist"
 Makefile.PL
 README
+lib/Email/Send/Mailer/SQLite.pm
+lib/Email/Send/Mailer/SMTP.pm
+lib/Email/Send/Mailer/DevNull.pm
+lib/Email/Send/Mailer/Test.pm
 lib/Email/Send/Mailer.pm
+lib/Email/SendX/Exceptions.pm
 t/00-load.t
 t/pod-coverage.t
 t/pod.t
+t/devnull.t
+t/sqlite-mailer.t
+t/test-mailer.t
