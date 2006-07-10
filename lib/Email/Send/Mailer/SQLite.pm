@@ -51,10 +51,6 @@ sub _deliver {
 
   my $dbh = $self->dbh;
 
-  warn sprintf("sending msg <%s> to <%s>",
-    substr($message, 0, 20), $from
-  );
-
   $dbh->do(
     "INSERT INTO emails (body, env_from) VALUES (?, ?)",
     undef,
