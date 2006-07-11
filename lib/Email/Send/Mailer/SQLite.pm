@@ -13,11 +13,13 @@ sub dbh {
   return $self->{dbh} ||= $self->_get_dbh;
 }
 
+sub db_file { shift->{db_file} || 'email.db' }
+
 sub _get_dbh {
   my ($self) = @_;
 
-  my $must_setup = ! -e $self->{db_file};
-  my $dbh = DBI->connect("dbi:SQLite:dbname=$self->{db_file}");
+  my $must_setup = ! -e $self->db_file;
+  my $dbh = DBI->connect("dbi:SQLite:dbname=" . $self->db_file);
 
   $self->_setup_dbh($dbh) if $must_setup;
 
