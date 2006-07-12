@@ -10,7 +10,12 @@ sub is_available { 1 };
 
 sub dbh {
   my ($self) = @_;
-  return $self->{dbh} ||= $self->_get_dbh;
+
+  if (not($self->{dbh}) or not($self->{pid}) or ($self->{pid} != $$)) {
+    return $self->{dbh} = $self->_get_dbh;
+  } else {
+    return $self->{dbh};
+  }
 }
 
 sub db_file { shift->{db_file} || 'email.db' }
