@@ -12,6 +12,7 @@ sub dbh {
   my ($self) = @_;
 
   if (not($self->{dbh}) or not($self->{pid}) or ($self->{pid} != $$)) {
+    $self->{pid} = $$;
     return $self->{dbh} = $self->_get_dbh;
   } else {
     return $self->{dbh};
