@@ -8,6 +8,16 @@ use DBI;
 
 sub is_available { 1 };
 
+sub new {
+  my ($class, @arg) = @_;
+
+  my $self = $class->SUPER::new(@arg);
+
+  $self->dbh; # get one now, just in case;
+
+  return $self;
+}
+
 sub dbh {
   my ($self) = @_;
 

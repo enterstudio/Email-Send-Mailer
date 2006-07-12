@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More 'no_plan';
+use Test::More tests => 10;
 
 use Email::Send;
 BEGIN { use_ok('Email::Send::Mailer::SQLite'); }
