@@ -5,6 +5,7 @@ Makefile.PL
 README
 lib/Email/Send/Mailer/DevNull.pm
 lib/Email/Send/Mailer/Maildir.pm
+lib/Email/Send/Mailer/OldSMTP.pm
 lib/Email/Send/Mailer/SQLite.pm
 lib/Email/Send/Mailer/SMTP.pm
 lib/Email/Send/Mailer/Test.pm
