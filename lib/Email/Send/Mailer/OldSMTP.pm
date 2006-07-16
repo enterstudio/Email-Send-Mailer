@@ -24,7 +24,7 @@ sub send {
     ICG::Handy::smtpsend(
       $message->as_string,
       to   => \@to,
-      from => $arg->from,
+      from => $arg->{from},
     );
   };
 
