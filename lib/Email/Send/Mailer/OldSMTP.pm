@@ -26,6 +26,7 @@ sub send {
       to   => \@to,
       from => $arg->{from},
       ($self->{arg}{host} ? (host => $self->{arg}{host}) : ()),
+      ($self->{arg}{port} ? (port => $self->{arg}{port}) : ()),
     );
   };
 
