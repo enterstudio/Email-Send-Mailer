@@ -25,6 +25,7 @@ sub send {
       $message->as_string,
       to   => \@to,
       from => $arg->{from},
+      ($self->{arg}{host} ? (host => $self->{arg}{host}) : ()),
     );
   };
 
