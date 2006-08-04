@@ -10,6 +10,10 @@ __PACKAGE__->mk_accessors(qw(bad_recipients));
 
 sub is_available { 1 };
 
+sub fail_if { my ($self, $cond) = @_; push @{ $self->{fail_if} }, $cond; };
+sub failure_conditions { @{ $self->{fail_if} } }
+sub clear_failure_conditions { @{ $self->{fail_if} } = () };
+
 sub recipient_ok {
   my ($self, $recipient) = @_;
 
@@ -43,6 +47,9 @@ sub send {
   my ($self, $message, $arg) = @_;
   
   my @to = ref $arg->{to} ? @{ $arg->{to} } : ($arg->{to});
+
+  return $self->exception('Email::SendX::Exception::Failure')
+    if grep { $_->($self, $message, $arg) } $self->failure_conditions;
 
   # should use List::MoreUtils::part -- when released
   my @undeliverables = grep { not $self->recipient_ok($_) } @to;
