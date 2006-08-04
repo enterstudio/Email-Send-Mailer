@@ -11,8 +11,8 @@ __PACKAGE__->mk_accessors(qw(bad_recipients));
 sub is_available { 1 };
 
 sub fail_if { my ($self, $cond) = @_; push @{ $self->{fail_if} }, $cond; };
-sub failure_conditions { @{ $self->{fail_if} } }
-sub clear_failure_conditions { @{ $self->{fail_if} } = () };
+sub failure_conditions { @{ $_[0]->{fail_if} ||= [] } }
+sub clear_failure_conditions { @{ $_[0]->{fail_if} } = () };
 
 sub recipient_ok {
   my ($self, $recipient) = @_;

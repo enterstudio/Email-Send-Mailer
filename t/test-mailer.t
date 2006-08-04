@@ -102,3 +102,26 @@ is_deeply(
   { 'mr.bad-example@nowhere.example.net' => 'bad recipient' },
   "third message failed to 'mr.bad-example'",
 );
+
+my $i = 0;
+$mailer->fail_if(sub { return 1 if $i++ % 2 });
+
+is(
+  $mailer->failure_conditions,
+  1,
+  "we're now failing on every other delivery",
+);
+
+{
+  my $result = $sender->send( $message, { to => [ qw(ok@ok.ok)] });
+  isa_ok($result, 'Email::SendX::Exception::Success');
+}
+
+is($mailer->deliveries, 4, "first post-fail_if delivery is OK");
+
+{
+  my $result = $sender->send( $message, { to => [ qw(ok@ok.ok)] });
+  isa_ok($result, 'Email::SendX::Exception::Failure');
+}
+
+is($mailer->deliveries, 4, "second post-fail_if delivery fails");
