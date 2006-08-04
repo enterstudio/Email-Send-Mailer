@@ -39,7 +39,8 @@ sub new {
   $arg ||= {};
 
   eval "require $arg->{mailer};" if not ref $arg->{mailer};
-  unless eval { $arg->{mailer}->isa('Email::Send::Mailer') };
+  die "mailer isn't a Mailer"
+    unless eval { $arg->{mailer}->isa('Email::Send::Mailer') };
 
   $arg->{mailer} = $arg->{mailer}->new($arg) unless ref $arg->{mailer};
 
