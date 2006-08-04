@@ -38,7 +38,8 @@ sub new {
   my ($class, $arg) = @_;
   $arg ||= {};
 
-  die unless eval { $arg->{mailer}->isa('Email::Send::Mailer') };
+  eval "require $arg->{mailer};" if not ref $arg->{mailer};
+  unless eval { $arg->{mailer}->isa('Email::Send::Mailer') };
 
   $arg->{mailer} = $arg->{mailer}->new($arg) unless ref $arg->{mailer};
 
