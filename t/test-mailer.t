@@ -103,25 +103,33 @@ is_deeply(
   "third message failed to 'mr.bad-example'",
 );
 
+####
+
+use_ok('Email::Send::Mailer::Failable');
+
+my $failer = Email::Send::Mailer::Failable->new({ mailer => $mailer });
+
 my $i = 0;
-$mailer->fail_if(sub { return 1 if $i++ % 2 });
+$failer->fail_if(sub { return 1 if $i++ % 2 });
 
 is(
-  $mailer->failure_conditions,
+  $failer->failure_conditions,
   1,
   "we're now failing on every other delivery",
 );
+
+$sender = Email::Send->new({ mailer => $failer });
 
 {
   my $result = $sender->send( $message, { to => [ qw(ok@ok.ok)] });
   isa_ok($result, 'Email::SendX::Exception::Success');
 }
 
-is($mailer->deliveries, 4, "first post-fail_if delivery is OK");
+is($failer->deliveries, 4, "first post-fail_if delivery is OK");
 
 {
   my $result = $sender->send( $message, { to => [ qw(ok@ok.ok)] });
   isa_ok($result, 'Email::SendX::Exception::Failure');
 }
 
-is($mailer->deliveries, 4, "second post-fail_if delivery fails");
+is($failer->deliveries, 4, "second post-fail_if delivery fails");
