@@ -42,9 +42,12 @@ sub new {
   die "mailer isn't a Mailer"
     unless eval { $arg->{mailer}->isa('Email::Send::Mailer') };
 
-  $arg->{mailer} = $arg->{mailer}->new({ %$arg }) unless ref $arg->{mailer};
+  my $new_arg = { %$arg };
+  delete $new_arg->{mailer};
+  $arg->{mailer} = $arg->{mailer}->new($new_arg) unless ref $arg->{mailer};
+  my $self = bless $arg => $class;
 
-  return bless $arg => $class;
+  return $self;
 }
 
 # for future virtual base class methods
