@@ -37,7 +37,11 @@ our $VERSION = '0.01';
 sub new {
   my ($class, $arg) = @_;
   $arg ||= {};
+
   die unless eval { $arg->{mailer}->isa('Email::Send::Mailer') };
+
+  $arg->{mailer} = $arg->{mailer}->new($arg) unless ref $arg->{mailer};
+
   return bless $arg => $class;
 }
 
