@@ -31,7 +31,7 @@ sub send {
   };
 
   if ($@) {
-    return $self->exception('Email::SendX::Exception::Failure');
+    return $self->exception('Email::SendX::Exception::Failure', $@);
   } else {
     return $self->exception('Email::SendX::Exception::Success');
   };
