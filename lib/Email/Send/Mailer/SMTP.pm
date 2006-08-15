@@ -19,7 +19,7 @@ sub new {
 sub send {
   my ($self, $message, $arg) = @_;
   
-  my @to = ref $arg->{to} ? @{ $arg->{to} } : ($arg->{to});
+  my @to = ref $to ? @{ $arg->{to} } : ($to);
 
   my %ok;
   {
