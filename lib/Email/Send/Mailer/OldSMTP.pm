@@ -20,6 +20,9 @@ sub send {
   
   my @to = ref $arg->{to} ? @{ $arg->{to} } : ($arg->{to});
 
+  my @undeliverable;
+  my $hook = sub { @undeliverable = @{ $_[0] } };
+
   eval {
     ICG::Handy::smtpsend(
       $message->as_string,
@@ -27,13 +30,20 @@ sub send {
       from => $arg->{from},
       ($self->{arg}{host} ? (host => $self->{arg}{host}) : ()),
       ($self->{arg}{port} ? (port => $self->{arg}{port}) : ()),
+      bad_to_hook => $hook,
     );
   };
 
   if ($@) {
     return $self->exception('Email::SendX::Exception::Failure', $@);
   } else {
-    return $self->exception('Email::SendX::Exception::Success');
+    return $self->exception(
+      'Email::SendX::Exception::Success',
+      (@undeliverable
+      ? (failures => { map { $_ => 'rejected by smtp server' } @undeliverable })
+      : ()
+      ),
+    );
   };
 }
 
