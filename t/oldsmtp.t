@@ -33,7 +33,7 @@ END_MESSAGE
   my $result = $sender->send(
     $message,
     {
-      from => 'sysadmins@icgroup.com',
+      from => 'devnull@pobox.com',
       to   => [ 'devnull@pobox.com', 'bounce@pobox.com', ],
     }
   );
