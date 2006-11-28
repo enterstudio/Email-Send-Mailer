@@ -4,7 +4,9 @@ use warnings;
 
 use Test::More 'no_plan';
 
+use File::Temp;
 use Email::Simple;
+use Email::Simple::FromHandle;
 use Email::Send;
 use ICG::TestTools::Mail;
 BEGIN { use_ok('Email::Send::Mailer::OldSMTP'); }
@@ -52,17 +54,30 @@ END_MESSAGE
   );
 }
 
-{
+my %tmp;
+for my $key (qw(handle fromhandle code)) {
+  my $fh = $tmp{$key} = File::Temp->new;
+  print {$fh} $message;
+  seek $fh, 0, 0;
+}
+
+# XXX duplicating tests from smtpsend, but we're paranoid -- hdp, 2006-11-28
+for my $input (
+  $message, 
+  Email::Simple->new($message),
+  Email::Simple::FromHandle->new($tmp{fromhandle}),
+  # Email::Send doesn't recognize these yet -- hdp, 2006-11-28
+#  $tmp{handle},
+#  sub { my $fh = $tmp{code}; <$fh> },
+) {
   my $sender = Email::Send->new({
     mailer => Email::Send::Mailer::OldSMTP->new({
       host => 'localhost',
       port => 25,
     }),
   });
-  # sending a plain string -- other message types are tested by smtpsend's
-  # tests -- hdp, 2006-11-28
   $sender->send(
-    $message,
+    $input,
     {
       from => 'devnull@pobox.com',
       # XXX stupid address to hard-code
@@ -76,7 +91,7 @@ END_MESSAGE
   };
   is $@, "";
 
-  $msg_obj = Email::Simple->new($message);
+  my $msg_obj = Email::Simple->new($message);
   is $mail->message->header('From'),
     $msg_obj->header('From'),
     'From: unchanged';
