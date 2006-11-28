@@ -68,7 +68,8 @@ sub AUTOLOAD {
 }
 
 sub send {
-  my ($self, $message, $arg) = @_;
+  # my ($self, $message, $arg) = @_;
+  my $self = shift;
 
   eval { $self->call_trigger(before_send => (@_)); };
 
@@ -78,7 +79,7 @@ sub send {
     die $error;
   }
 
-  $self->{mailer}->send($message, $arg);
+  $self->{mailer}->send(@_);
 }
 
 =head1 AUTHOR
