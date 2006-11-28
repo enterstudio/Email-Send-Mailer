@@ -4,7 +4,9 @@ use warnings;
 
 use Test::More 'no_plan';
 
+use Email::Simple;
 use Email::Send;
+use ICG::TestTools::Mail;
 BEGIN { use_ok('Email::Send::Mailer::OldSMTP'); }
 
 my $mailer = Email::Send::Mailer::OldSMTP->new({
@@ -15,9 +17,10 @@ my $mailer = Email::Send::Mailer::OldSMTP->new({
 isa_ok($mailer, 'Email::Send::Mailer');
 isa_ok($mailer, 'Email::Send::Mailer::OldSMTP');
 
-my $message = <<'END_MESSAGE';
-From: sender@test.example.com
-To: recipient@nowhere.example.net
+my $rcpt = "recipient+$^T\@nowhere.example.net";
+my $message = <<"END_MESSAGE";
+From: sender\@test.example.com
+To: $rcpt
 Subject: this message is going nowhere fast
 
 Dear Recipient,
@@ -47,4 +50,39 @@ END_MESSAGE
     { 'bounce@pobox.com' => 'rejected by smtp server' },
     "delivery indicates failure to 'bounce\@pobox.com'",
   );
+}
+
+{
+  my $sender = Email::Send->new({
+    mailer => Email::Send::Mailer::OldSMTP->new({
+      host => 'localhost',
+      port => 25,
+    }),
+  });
+  # sending a plain string -- other message types are tested by smtpsend's
+  # tests -- hdp, 2006-11-28
+  $sender->send(
+    $message,
+    {
+      from => 'devnull@pobox.com',
+      # XXX stupid address to hard-code
+      to   => [ 'hdp+test-tools@vex.pobox.com' ],
+    },
+  );
+  my $mail = eval {
+    ICG::TestTools::Mail->wait_for_message(
+      [ env_to => $rcpt ],
+    );
+  };
+  is $@, "";
+
+  $msg_obj = Email::Simple->new($message);
+  is $mail->message->header('From'),
+    $msg_obj->header('From'),
+    'From: unchanged';
+
+  is $mail->message->body,
+    $msg_obj->body,
+    'body unchanged';
+
 }

@@ -25,7 +25,7 @@ sub send {
 
   eval {
     ICG::Handy::smtpsend(
-      $message->as_string,
+      $message,
       to   => \@to,
       from => $arg->{from},
       ($self->{arg}{host} ? (host => $self->{arg}{host}) : ()),
