@@ -30,6 +30,7 @@ sub send {
       from => $arg->{from},
       ($self->{arg}{host} ? (host => $self->{arg}{host}) : ()),
       ($self->{arg}{port} ? (port => $self->{arg}{port}) : ()),
+      ($arg->{smtp}       ? (smtp => $arg->{smtp})       : ()),
       bad_to_hook => $hook,
     );
   };
