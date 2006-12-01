@@ -1,46 +1,47 @@
 package Email::Send::Mailer::SMTP;
-use base qw(Email::Send::Mailer);
+use base qw(Email::Send::Mailer::OldSMTP);
 use base qw(Class::Accessor);
 
 use strict;
 use warnings;
 
-use IO::Persistent::SMTP;
+use Net::SMTP;
+use ICG::Handy ();
+use Sys::Hostname::Long ();
 
-sub is_available { 1 };
+sub _new_smtp {
+  my ($self, $arg) = @_;
+  return Net::SMTP->new(
+    Host => $arg->{host} || 'localhost',
+    Port => $arg->{port} || 25,
+    Hello => $arg->{helo} || Sys::Hostname::Long::hostname_long,
+    Timeout => $arg->{timeout} || 60,
+  );
+}
 
 sub new {
   my ($class, $arg) = @_;
-  my $smtp = IO::Persistent::SMTP->new(%$arg);
+
+  my $smtp = $class->_new_smtp($arg);
 
   bless { arg => $arg, _smtp => $smtp } => $class;
 }
 
 sub send {
   my ($self, $message, $arg) = @_;
-  
-  my @to = ref $arg->{to} ? @{ $arg->{to} } : ($arg->{to});
 
-  my %ok;
-  {
-    my @ok = $self->{_smtp}->send(
-      $message->as_string,
-      to   => \@to,
-      from => $arg->{from},
-    );
-
-    @ok = () unless $ok[0]; # stupid api bubbling up from Net::SMTP
-    return $self->exception('Email::SendX::Exception::Failure') unless (@ok);
-
-    %ok = map { $_ => 1 } @ok;
+  eval { 
+    $self->{_smtp}->reset;
+  };
+  if ($@) {
+    # XXX should this be something else?
+    warn $@;
+    $self->{_smtp} = $self->_new_smtp($self->{arg});
   }
 
-  my @undeliverable = grep { not $ok{$_} } @to;
+  $arg->{smtp} = $self->{_smtp};
 
-  return $self->exception(
-    'Email::SendX::Exception::Success',
-    failures => { map { $_ => 'rejected by smtp server' } @undeliverable },
-  );
+  $self->SUPER::send($message, $arg);
 }
 
 1;
