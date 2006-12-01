@@ -10,6 +10,7 @@ use Email::Simple::FromHandle;
 use Email::Send;
 use ICG::TestTools::Mail;
 BEGIN { use_ok('Email::Send::Mailer::OldSMTP'); }
+BEGIN { use_ok('Email::Send::Mailer::SMTP'); }
 
 my $mailer = Email::Send::Mailer::OldSMTP->new({
   host => 'mx-all.pobox.com',
@@ -62,42 +63,53 @@ for my $key (qw(handle fromhandle code)) {
 }
 
 # XXX duplicating tests from smtpsend, but we're paranoid -- hdp, 2006-11-28
-for my $input (
-  $message, 
-  Email::Simple->new($message),
-  Email::Simple::FromHandle->new($tmp{fromhandle}),
-  # Email::Send doesn't recognize these yet -- hdp, 2006-11-28
-#  $tmp{handle},
-#  sub { my $fh = $tmp{code}; <$fh> },
+for my $sender_test (
+  [ 'Email::Send::Mailer::OldSMTP' ],
+  [ 'Email::Send::Mailer::SMTP' ],
 ) {
+  my ($sender_class) = @$sender_test;
   my $sender = Email::Send->new({
-    mailer => Email::Send::Mailer::OldSMTP->new({
+    mailer => $sender_class->new({
       host => 'localhost',
       port => 25,
     }),
   });
-  $sender->send(
-    $input,
-    {
-      from => 'devnull@pobox.com',
-      # XXX stupid address to hard-code
-      to   => [ 'hdp+test-tools@vex.pobox.com' ],
-    },
-  );
-  my $mail = eval {
-    ICG::TestTools::Mail->wait_for_message(
-      [ env_to => $rcpt ],
-    );
-  };
-  is $@, "";
 
-  my $msg_obj = Email::Simple->new($message);
-  is $mail->message->header('From'),
-    $msg_obj->header('From'),
-    'From: unchanged';
+  for my $message_test (
+    [ $message, 'scalar' ],
+    [ Email::Simple->new($message), 'Simple' ],
+    [ Email::Simple::FromHandle->new($tmp{fromhandle}), 'FromHandle' ],
+    # Email::Send doesn't recognize these yet -- hdp, 2006-11-28
+  #  $tmp{handle},
+  #  sub { my $fh = $tmp{code}; <$fh> },
+  ) {
+    my ($input, $m_label) = @$message_test;
+    eval {
+      $sender->send(
+        $input,
+        {
+          from => 'devnull@pobox.com',
+          # XXX stupid address to hard-code
+          to   => [ 'hdp+test-tools@vex.pobox.com' ],
+        },
+      );
+    };
+    is $@, "", "$sender_class, $m_label: sending didn't die";
+    my $mail = eval {
+      ICG::TestTools::Mail->wait_for_message(
+        [ env_to => $rcpt ],
+      );
+    };
+    is $@, "", "$sender_class, $m_label: found message";
 
-  is $mail->message->body,
-    $msg_obj->body,
-    'body unchanged';
+    my $msg_obj = Email::Simple->new($message);
+    is $mail->message->header('From'),
+      $msg_obj->header('From'),
+      "$sender_class, $m_label: From: unchanged";
 
+    is $mail->message->body,
+      $msg_obj->body,
+      "$sender_class, $m_label: body unchanged";
+
+  }
 }
