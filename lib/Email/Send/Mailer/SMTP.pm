@@ -1,6 +1,5 @@
 package Email::Send::Mailer::SMTP;
 use base qw(Email::Send::Mailer::OldSMTP);
-use base qw(Class::Accessor);
 
 use strict;
 use warnings;
