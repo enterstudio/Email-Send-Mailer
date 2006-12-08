@@ -1,19 +1,25 @@
 Changes
-MANIFEST
-META.yml # Will be created by "make dist"
-Makefile.PL
-README
+lib/Email/Send/Mailer.pm
 lib/Email/Send/Mailer/DevNull.pm
+lib/Email/Send/Mailer/Failable.pm
 lib/Email/Send/Mailer/Maildir.pm
 lib/Email/Send/Mailer/OldSMTP.pm
-lib/Email/Send/Mailer/SQLite.pm
+lib/Email/Send/Mailer/Sendmail.pm
 lib/Email/Send/Mailer/SMTP.pm
+lib/Email/Send/Mailer/SQLite.pm
+lib/Email/Send/Mailer/STDOUT.pm
 lib/Email/Send/Mailer/Test.pm
-lib/Email/Send/Mailer.pm
+lib/Email/Send/Mailer/Wrapper.pm
 lib/Email/SendX/Exceptions.pm
+Makefile.PL
+MANIFEST
+META.yml			# Will be created by "make dist"
+README
 t/00-load.t
+t/devnull.t
 t/pod-coverage.t
 t/pod.t
-t/devnull.t
+t/sendmail.t
+t/smtp.t
 t/sqlite-mailer.t
 t/test-mailer.t
