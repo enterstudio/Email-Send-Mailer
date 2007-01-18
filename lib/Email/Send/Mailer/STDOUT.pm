@@ -11,8 +11,8 @@ sub send {
   
   my @to = ref $arg->{to} ? @{ $arg->{to} } : $arg->{to};
 
-  print "ENVELOPE TO  : @to\n"
-  print "ENVELOPE FROM: $arg->{from}\n"
+  print "ENVELOPE TO  : @to\n";
+  print "ENVELOPE FROM: $arg->{from}\n";
   print '-' x 10, " begin body\n";
 
   print $message;
