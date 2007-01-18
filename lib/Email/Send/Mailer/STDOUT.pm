@@ -13,11 +13,11 @@ sub send {
 
   print "ENVELOPE TO  : @to\n";
   print "ENVELOPE FROM: $arg->{from}\n";
-  print '-' x 10, " begin body\n";
+  print '-' x 10, " begin message\n";
 
-  print $message;
+  print $message->as_string;
 
-  print '-' x 10, " begin body\n";
+  print '-' x 10, " end message\n";
 
   return $self->exception(
     'Email::SendX::Exception::Success',
