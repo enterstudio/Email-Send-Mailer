@@ -12,13 +12,13 @@ Email::Send::Mailer::Wrapper - a mailer that wraps a mailer for mailing mail
 
 =head1 VERSION
 
-version 0.01
+version 0.020000
 
  $Id$
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.020000';
 
 =head1 SYNOPSIS
 
