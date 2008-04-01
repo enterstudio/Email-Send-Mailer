@@ -13,7 +13,6 @@ lib/Email/Send/Mailer/Wrapper.pm
 lib/Email/SendX/Exceptions.pm
 Makefile.PL
 MANIFEST
-META.yml			# Will be created by "make dist"
 README
 t/00-load.t
 t/devnull.t
