@@ -13,13 +13,13 @@ Email::Send::Mailer - a standard, extended interface for Email::Send mailers
 
 =head1 VERSION
 
-version 0.020000
+version 0.021
 
  $Id$
 
 =cut
 
-our $VERSION = '0.020000';
+our $VERSION = '0.021';
 
 =head1 SYNOPSIS
 

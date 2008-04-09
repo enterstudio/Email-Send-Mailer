@@ -9,13 +9,13 @@ Email::SendX::Exceptions - exceptions used by Email::Send::Mailers
 
 =head1 VERSION
 
-version 0.020000
+version 0.021
 
  $Id$
 
 =cut
 
-our $VERSION = '0.020000';
+our $VERSION = '0.021';
 
 =head1 SYNOPSIS
 
