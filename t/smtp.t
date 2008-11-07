@@ -40,7 +40,7 @@ END_MESSAGE
     $message,
     {
       from => 'devnull@pobox.com',
-      to   => [ 'devnull@pobox.com', 'bounce@pobox.com', ],
+      to   => [ 'devnull@pobox.com', '.@pobox.com', ],
     }
   );
 
@@ -50,8 +50,8 @@ END_MESSAGE
 
   is_deeply(
     $result->failures,
-    { 'bounce@pobox.com' => 'rejected by smtp server' },
-    "delivery indicates failure to 'bounce\@pobox.com'",
+    { '.@pobox.com' => 'rejected by smtp server' },
+    "delivery indicates failure to '.\@pobox.com'",
   );
 }
 
